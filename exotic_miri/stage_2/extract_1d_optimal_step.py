@@ -9,7 +9,7 @@ class Extract1DOptimalStep(Step):
     """ Optimal extraction step. """
 
     spec = """
-    median_spatial_profile = boolean(default=False)  # use median spatial profile.
+    median_spatial_profile = boolean(default=True)  # use median spatial profile.
     trace_position = string(default="constant")  # locate trace method: constant, gaussian_fits
     aperture_center = integer(default=36)  # center of aperture.
     aperture_left_width = integer(default=8)  # left-side of aperture width.
@@ -40,8 +40,8 @@ class Extract1DOptimalStep(Step):
             A cube of readnoise values, one for each integration, of shape
             (n_ints, n_rows, n_cols).
         median_spatial_profile: boolean
-            If True median the spatial profiles through time. Default is
-            False.
+            If True, median the spatial profiles through time. Default is
+            True.
         trace_position: string
             The method for locating the spectral trace per detector row.
             constant: uses the value specified by aperture_center.
@@ -82,7 +82,7 @@ class Extract1DOptimalStep(Step):
             # Check input model type.
             if not isinstance(input_model, datamodels.CubeModel):
                 self.log.error("Input is a {} which was not expected for "
-                               "Extract1DBoxStep, skipping step.".format(
+                               "Extract1DOptimalStep, skipping step.".format(
                                 str(type(input_model))))
                 return None, None, None
 
@@ -252,9 +252,8 @@ class Extract1DOptimalStep(Step):
 
     def _draw_trace_mask(self, data_cube, trace_mask_cube):
         for int_idx in range(data_cube.shape[0]):
-            fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(9, 7))
-            ax1.get_shared_y_axes().join(ax1, ax2, ax3)
-            ax1.get_shared_x_axes().join(ax1, ax2)
+            fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(9, 7), sharey="all")
+            ax1.sharex(ax2)
 
             # Data.
             im = data_cube[int_idx, :, :]
