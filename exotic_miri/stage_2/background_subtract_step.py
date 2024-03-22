@@ -80,7 +80,7 @@ class BackgroundSubtractStep(Step):
         bkd_col_idxs = np.concatenate(
             [np.arange(self.bkg_col_left_start, self.bkg_col_left_end),
              np.arange(self.bkg_col_right_start, self.bkg_col_right_end)])
-        bkg = np.median(data[:, :, bkd_col_idxs], axis=(1, 2))
+        bkg = np.nanmedian(data[:, :, bkd_col_idxs], axis=(1, 2))
         return np.tile(bkg[:, np.newaxis, np.newaxis],
                        (1, data.shape[1], data.shape[2]))
 
@@ -89,7 +89,7 @@ class BackgroundSubtractStep(Step):
         bkd_col_idxs = np.concatenate(
             [np.arange(self.bkg_col_left_start, self.bkg_col_left_end),
              np.arange(self.bkg_col_right_start, self.bkg_col_right_end)])
-        bkg = np.median(data[:, :, bkd_col_idxs], axis=2)
+        bkg = np.nanmedian(data[:, :, bkd_col_idxs], axis=2)
         bkg = np.tile(bkg[:, :, np.newaxis], (1, 1, data.shape[2]))
         if self.smoothing_length is None:
             return bkg
@@ -104,9 +104,9 @@ class BackgroundSubtractStep(Step):
         rs_mid_col = (self.bkg_col_right_start + self.bkg_col_right_end) / 2
         xs = np.array([ls_mid_col, rs_mid_col])
 
-        ls_mid_val = np.median(
+        ls_mid_val = np.nanmedian(
             data[:, :, self.bkg_col_left_start:self.bkg_col_left_end], axis=2)
-        rs_mid_val = np.median(
+        rs_mid_val = np.nanmedian(
             data[:, :, self.bkg_col_right_start:self.bkg_col_right_end], axis=2)
         ys = np.concatenate(
             [ls_mid_val[:, np.newaxis, :], rs_mid_val[:, np.newaxis, :]], axis=1)
